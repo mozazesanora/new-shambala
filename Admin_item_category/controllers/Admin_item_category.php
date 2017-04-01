@@ -32,7 +32,7 @@ class Admin_item_category extends CI_Controller {
 				'join' => array(
 					(object)array(
 						'join_table' => 'item_category as parent_item',
-						'on' => 'item_category.parent=parent_item.id',
+						'on' => 'item_category.parent=parent_item.code',
 						'align' => 'left',
 						),
 					),
@@ -60,6 +60,7 @@ class Admin_item_category extends CI_Controller {
 		$query_add=$this->item_category->add(
 			(object)array(
 				'fields' => array(
+					'code' => $this->input->post('code'),
 					'parent' => $this->input->post('parent'),
 					'name' => $this->input->post('name'),
 					'user_id' => $user_admin_ses->id,
@@ -74,6 +75,7 @@ class Admin_item_category extends CI_Controller {
 		$query_update=$this->item_category->update(
 			(object)array(
 				'fields' => array(
+					'code' => $this->input->post('code'),
 					'parent' => $this->input->post('parent'),
 					'name' => $this->input->post('name'),	
 					),
@@ -83,30 +85,21 @@ class Admin_item_category extends CI_Controller {
 		redirect('adm1n/inventory/item_category');
 	}
 
-	public function delete($id){
-		$this->item_category->delete(
-			(object)array(
-				'criteria_value' => $id
-				)
-			);
-		redirect('adm1n/inventory/item_category');
-	}
-
 	public function check_id(){
-		$id = $_POST["id"];
+		$id = $_POST["code"];
 		if(!empty($id)){
 			$check = $this->item_category->get(
 				(object)array(
 					'where' => array(
 						(object)array(
-							'param_name' => 'id',
+							'param_name' => 'code',
 							'param_value' => $id,
 							),
 						),
 					'row'=>true
 					)
 				);
-			if(!empty($check) || $id < 1){
+			if(!empty($check) || $id <= 0){
 				echo "<span class='status-not-available' style='color: red'>ID Not Available.</span>";
 			}else{
 				echo "<span class='status-available' style='color: green'>ID Available.</span>";

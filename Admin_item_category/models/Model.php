@@ -9,7 +9,6 @@ class model extends CI_Model
         $this->thisdb = $this->load->database('default', TRUE);
     }
 
-    /*get all data users*/
 }
 
 ?>

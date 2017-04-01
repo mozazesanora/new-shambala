@@ -13,7 +13,7 @@
 <style>
     .panel {
         border-radius: 7px;
-        border:3px outset;
+        border:2px solid #ababab;
         padding: 10px;
         color: black;
         min-height: 100px;
@@ -41,13 +41,13 @@ function random_color() {
 }
 foreach ($item_category as $key) { ?>
 <div class="col-md-2">
-    <div class="panel" style="background-color: yellow">
+    <div class="panel" style="background-color: white">
         <div class="row">
             <div class="col-md-6">
                 <div class="count"><?php echo $key->name;?></div>
             </div>
             <div class="col-md-6 icon">
-                <?php echo $key->id;?>
+                <?php echo $key->code;?>
             </div>
         </div>
         <div class="row">
@@ -64,8 +64,7 @@ foreach ($item_category as $key) { ?>
         </div>
         <div class="row">
             <div style="text-align: right" class="col-md-12">
-                <a class="btn btn-primary btn-xs" onclick="edit('<?php echo $key->id;?>','<?php echo $key->name;?>','<?php echo $key->parent;?>');"><i class="fa fa-edit"></i></a>
-                <a class="btn btn-primary btn-xs" onclick="ConfirmMessage('Are you sure to delete this item category ?','<?php echo base_url();?>adm1n/inventory/item_category/delete/<?php echo $key->id ?>')"><i class="clip-remove"></i></a>
+                <a class="btn btn-primary btn-xs" onclick="edit('<?php echo $key->id;?>','<?php echo $key->code;?>','<?php echo $key->name;?>','<?php echo $key->parent;?>');"><i class="fa fa-edit"></i></a>
             </div>
         </div>
     </div>
@@ -79,6 +78,7 @@ foreach ($item_category as $key) { ?>
     function add() {
         $('#mdl_title').html("Add Item Category");
         $('#mdl_form').attr("action", "<?php echo base_url(); ?>adm1n/inventory/item_category/insert");
+        $('#mdl_form_code').val('');
         $('#mdl_form_item_category').select2();
         $('#mdl_form_parent_code').val('0');
         $('#mdl_form_parent_code').select2();
@@ -86,16 +86,17 @@ foreach ($item_category as $key) { ?>
         $('#mdl').modal('show')
     }
 
-    function edit(id,name,parent) {
+    function edit(id,code,name,parent) {
         $('#mdl_title').html("Edit Item Category");
         $('#mdl_form').attr("action", "<?php echo base_url(); ?>adm1n/inventory/item_category/update");
         $('#mdl_form_id').val(id);
+        $('#mdl_form_code').val(code);
         $('#mdl_form_parent_code').val(parent);
         $('#mdl_form_parent_code').select2();
-        $("option[value="+id+"]").attr("disabled", "disabled");
+        $("option[value="+code+"]").attr("disabled", "disabled");
         $('#mdl_form_name').val(name);
         $('#mdl').on('hidden.bs.modal', function () {
-            $("option[value="+id+"]").removeAttr("disabled", "disabled");
+            $("option[value="+code+"]").removeAttr("disabled", "disabled");
 
         })
         $('#mdl').modal('show');
@@ -104,7 +105,7 @@ foreach ($item_category as $key) { ?>
     function checkAvailability() {
         jQuery.ajax({
             url: "<?php echo base_url()?>adm1n/inventory/item_category/check",
-            data:'id='+$("#mdl_form_id").val(),
+            data:'code='+$("#mdl_form_code").val(),
             type: "POST",
             success:function(data){
                 $("#user-availability-status").html(data);
@@ -124,11 +125,13 @@ foreach ($item_category as $key) { ?>
                         aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title" id="mdl_title">Modal title</h4>
                     </div>
+                    <input name="id" hidden id="mdl_form_id">
+
                     <div class="modal-body">
                         <div class="row" style="margin-bottom: 5px;">
                             <div class="col-md-3">ID</div>
                             <div id="check_id" class="col-md-7">
-                             <input name="id" type="number" id="mdl_form_id" oninput="checkAvailability()">
+                             <input name="code" type="number" id="mdl_form_code" oninput="checkAvailability()" placeholder="0" required="true">
                              <span id="user-availability-status"></span>
                          </div>
                      </div>
@@ -146,7 +149,7 @@ foreach ($item_category as $key) { ?>
                                 <option value="0" selected="true">None</option>
                                 <?php
                                 foreach($item_category as $key){
-                                    echo "<option value='".$key->id."'>".$key->name."</option>";
+                                    echo "<option value='".$key->code."'>".$key->code." ".$key->name."</option>";
                                 }
                                 ?>
                             </select>
