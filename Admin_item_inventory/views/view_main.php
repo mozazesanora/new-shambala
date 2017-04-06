@@ -19,14 +19,14 @@
             <th style="width: 10%;">Name</th>
             <th style="width: 10%;">Category</th>
             <th style="width: 10%;">Part of</th>
-            <th style="width: 10%;">Serial</th>
+            <th style="width: 5%;">Serial</th>
             <th style="width: 10%;">Description</th>
-            <th style="width: 10%;">Entry Year</th>
-            <th style="width: 5%;">Rentable</th>
-            <th style="width: 5%;">Availability</th>
+            <th style="width: 10%;">Age</th>
+            <th style="width: 5%;">Rent able</th>
+            <th style="width: 5%;">Avail able</th>
             <th style="width: 10%;">Condition</th>
             <th style="width: 10%;">Location</th>
-            <th style="width: 5%;">Action</th>
+            <th style="width: 10%;">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -53,15 +53,21 @@
                     <?php echo $key->serial_number;?>
                 </td>
                 <td><?php echo $key->description;?></td>
-                <td><?php echo $key->entry_date;?></td>
                 <td>
-                <?php 
+                    <i class="fa fa-calendar" title="<?php echo date("Y-m-d H:i:s",strtotime($key->entry_date)); ?> WIB"></i>
+                    <?php
+                    $this->load->library('DateTimeHuman');
+                    echo $this->datetimehuman->datetime_range_to_human_string($key->entry_date, date("Y-m-d H:i:s"));
+                    ?>
+                </td>
+                <td>
+                    <?php 
                     if($key->can_be_rent == 1){
                         echo "<span class='label label-success'>Yes</span>";
                     }else{
                         echo "<span class='label label-danger'>No</span>";
                     }
-                ?>
+                    ?>
                 </td>
                 <td>
                     <?php 
@@ -70,13 +76,43 @@
                     }else{
                         echo "<span class='label label-danger'>No</span>";
                     }
-                ?>
+                    ?>
                 </td>
                 <td><?php echo $key->status ?></td>
                 <td><?php echo $key->location ?></td>
-                <td> 
-                    <a class="btn btn-primary btn-xs" onclick="edit('<?php echo $key->id;?>','<?php echo $key->category_item;?>','<?php echo $key->parent;?>','<?php echo $key->name;?>','<?php echo $key->description;?>','<?php echo $key->can_be_rent;?>','<?php echo $key->serial_number;?>','<?php echo $key->entry_date;?>','<?php echo $key->status;?>','<?php echo $key->location;?>');"><i class="fa fa-edit"></i></a>
-                    <div class="btn btn-danger btn-xs" onclick="ConfirmMessage('Are you sure to delete this item ?','<?php echo base_url();?>adm1n/inventory/item/delete/<?php echo $key->id ?>')"><i class="clip-remove"></i></div>
+                <td>
+                    <div class="btn-group">
+                        <a target="_blank" class="btn btn-primary btn-xs" href="<?php echo base_url();?>adm1n/inventory/item/generate_code/<?php $serial = str_replace('/', '~', $key->serial_number); echo $serial;?>/<?php echo  $key->name;?>/250" title="Print QR Code" data-toggle="tooltip">
+                            <i class="fa fa-print"></i>
+                        </a> 
+                        <button type="button" class="btn btn-primary dropdown-toggle btn-xs" data-toggle="dropdown">
+                            <span class="caret"></span>
+                        </button>
+                        <ul style="width: 30px" class="dropdown-menu" role="menu">
+                            <li>
+                                <a  target="_blank" href="<?php echo base_url();?>adm1n/inventory/item/generate_code/<?php $serial = str_replace('/', '~', $key->serial_number); echo $serial;?>/<?php echo  $key->name;?>/100">
+                                    Small
+                                </a>
+                            </li>
+                            <li>
+                                <a target="_blank" href="<?php echo base_url();?>adm1n/inventory/item/generate_code/<?php $serial = str_replace('/', '~', $key->serial_number); echo $serial;?>/<?php echo  $key->name;?>/200">
+                                    Medium
+                                </a>
+                            </li>
+                            <li>
+                                <a target="_blank" href="<?php echo base_url();?>adm1n/inventory/item/generate_code/<?php $serial = str_replace('/', '~', $key->serial_number); echo $serial;?>/<?php echo  $key->name;?>/300">
+                                    Large
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="btn btn-warning btn-xs" onclick="edit('<?php echo $key->id;?>','<?php echo $key->category_item;?>','<?php echo $key->parent;?>','<?php echo $key->name;?>','<?php echo $key->description;?>','<?php echo $key->can_be_rent;?>','<?php echo $key->serial_number;?>','<?php echo $key->entry_date;?>','<?php echo $key->status;?>','<?php echo $key->location;?>');" title="Edit" data-toggle="tooltip"><i class="fa fa-edit"></i>
+                    </div>
+                    <br>
+                    <div class="btn btn-danger btn-xs" onclick="ConfirmMessage('Are you sure to delete this item ?','<?php echo base_url();?>adm1n/inventory/item/delete/<?php echo $key->id ?>')" title="Remove" data-toggle="tooltip"><i class="clip-remove"></i></div>
+                    <div class="btn btn-info btn-xs" title="created by : <?php echo $key->username?>" data-toogle="tooltip">
+                        <i class="clip-info"></i>
+                    </div>
                     
                 </td>
             </tr>
@@ -86,7 +122,6 @@
         ?>
     </tbody>
 </table>
-
 <!-- end: CONTENT -->
 
 <script>
@@ -124,6 +159,10 @@
         $('#mdl_form_location').val(location);
         $('#mdl_form_condition').val(condition);
         $('#mdl').modal('show');
+    }
+
+    function size_print(){
+
     }
 
 </script>
@@ -204,28 +243,30 @@
                         <div class="row" style="margin-bottom: 5px;">
                             <div class="col-md-3">Can be Rent</div>
                             <div class="col-md-7">
-                             <select id="mdl_form_can_rent" class="form-control" name="rentable">
+                               <select id="mdl_form_can_rent" class="form-control" name="rentable">
                                 <option value="1">Yes</option>
                                 <option value="0">No</option> 
-                             </select>
-                            </div>
-                         </div>
-                          <div class="row" style="margin-bottom: 5px;">
-                            <div class="col-md-3">Location</div>
-                            <div class="col-md-7">
-                             <input type="text" required="" name="location" class="form-control" id="mdl_form_location">
-                         </div>
-                     </div>
-                     <b style="color: red">NOTE :</b> Prototype
-                 </div>
-                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <input type="submit" class="btn btn-primary" value="Save">
-                </div>
-            </form>
-        </div>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-bottom: 5px;">
+                        <div class="col-md-3">Location</div>
+                        <div class="col-md-7">
+                           <input type="text" required="" name="location" class="form-control" id="mdl_form_location">
+                       </div>
+                   </div>
+                   <b style="color: red">NOTE :</b> Prototype
+               </div>
+               <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-primary" value="Save">
+            </div>
+        </form>
     </div>
 </div>
+</div>
+
+
 
 <!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/adminside/plugins/select2/select2.min.js"></script>

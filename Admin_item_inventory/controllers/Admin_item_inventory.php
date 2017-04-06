@@ -29,7 +29,7 @@ class Admin_item_inventory extends CI_Controller {
 	{	
 		$data['item_inventory']=$this->item_inventory->get(
 			(object)array(
-				'order_by' => "inventory_items.name ASC",
+				'order_by' => "inventory_items.created_at DESC",
 				'join' => array(
 					(object)array(
 						'join_table' => 'inventory_items as parent_inventory',
@@ -41,8 +41,13 @@ class Admin_item_inventory extends CI_Controller {
 						'on' => 'inventory_items.category_item=item_category.id',
 						'align' => 'left',
 						),
+					(object)array(
+						'join_table' => 'user',
+						'on' => 'inventory_items.user_id = user.id',
+						'align' => 'left',
+						),
 					),
-				'select'=>'inventory_items.*,parent_inventory.name as parent_name,item_category.name as category_name',
+				'select'=>'inventory_items.*,parent_inventory.name as parent_name,item_category.name as category_name,user.full_name as username',
 				)
 			);
 
@@ -113,21 +118,13 @@ class Admin_item_inventory extends CI_Controller {
 		redirect('adm1n/inventory/item');
 	}
 
-	public function select_print(){
-		$data['item_inventory']=$this->item_inventory->get(
-			(object)array(
-				'select'=>'inventory_items.*',
-			)
-		);
-		$data = array(
-			'web_title' => 'Inventory',
-			'web_sub_title' => 'Print QR Code',
-			'web_page_icon' => 'fa fa-archive',
-			'tree_menu' => array(),
-			'web_body' => $this->load->view('select_print',$data,true)
-			);
-
-		$this->parser->parse('template_adminside', $data);
+	public function generate_code($serial,$name,$size){
+		$serial = str_replace('~', '/', $serial);
+		$name = str_replace('%20', ' ', $name);
+		$data['serial'] = $serial;
+		$data['name'] = $name;
+		$data['size'] = $size;
+		$this->load->view('generate_code',$data);
 	}
 
 	public function delete($id){
