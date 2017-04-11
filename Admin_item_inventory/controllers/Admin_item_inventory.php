@@ -71,12 +71,8 @@ class Admin_item_inventory extends CI_Controller {
 		$category_item = $this->input->post('item_category');
 		$date = $this->input->post('entry');
 		$year = strtok($date, '-');
-		if($this->input->post('serial_number')!=null){
-			$key = $this->input->post('serial_number');
-		}else{
-			$generate_serial = $this->Model->generate_serial($category_item,$year);
-			$key = $generate_serial;
-		}
+		$generate_serial = $this->Model->generate_serial($category_item,$year);
+		$key = $generate_serial;
 		$query_add=$this->item_inventory->add(
 			(object)array(
 				'fields' => array(
@@ -85,6 +81,7 @@ class Admin_item_inventory extends CI_Controller {
 					'category_item' => $this->input->post('item_category'),
 					'can_be_rent' => $this->input->post('rentable'),
 					'serial_number' => $key,
+					'sn_product' => $this->input->post('serial_number'),
 					'entry_date' => $this->input->post('entry'),
 					'description' => $this->input->post('description'),
 					'availability' => 1,
@@ -107,7 +104,7 @@ class Admin_item_inventory extends CI_Controller {
 					'name' => $this->input->post('name'),
 					'can_be_rent' => $this->input->post('rentable'),
 					'description' => $this->input->post('description'),
-					'serial_number' => $this->input->post('serial_number'),
+					'sn_product' => $this->input->post('serial_number'),
 					'entry_date' => $this->input->post('entry'),
 					'status' => $this->input->post('condition'),
 					'location' => $this->input->post('location'),	

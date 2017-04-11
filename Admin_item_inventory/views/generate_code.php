@@ -19,6 +19,8 @@
 	window.print();
  	setTimeout(window.close, 0);
 	jQuery('#qrcodeCanvas').qrcode({
+		render  : "canvas",
+		ecLevel	: 'H',
 		text	: "<?php echo $serial;?>",
 		width	: <?php echo $size;?>,
 		height	: <?php echo $size;?>,

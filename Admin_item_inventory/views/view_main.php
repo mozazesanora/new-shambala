@@ -19,7 +19,7 @@
             <th style="width: 10%;">Name</th>
             <th style="width: 10%;">Category</th>
             <th style="width: 10%;">Part of</th>
-            <th style="width: 5%;">Serial</th>
+            <th style="width: 5%;">Code</th>
             <th style="width: 10%;">Description</th>
             <th style="width: 10%;">Age</th>
             <th style="width: 5%;">Rent able</th>
@@ -51,6 +51,12 @@
                 </td>
                 <td>
                     <?php echo $key->serial_number;?>
+                    <i class="fa fa-info-circle" data-toogle="tooltip" title="S/N : <?php if(isset($key->sn_product)){
+                            echo $key->sn_product;
+                        }else{
+                            echo "none";
+                        }
+                        ?>"></i>
                 </td>
                 <td><?php echo $key->description;?></td>
                 <td>
@@ -82,7 +88,7 @@
                 <td><?php echo $key->location ?></td>
                 <td>
                     <div class="btn-group">
-                        <a target="_blank" class="btn btn-primary btn-xs" href="<?php echo base_url();?>adm1n/inventory/item/generate_code/<?php $serial = str_replace('/', '~', $key->serial_number); echo $serial;?>/<?php echo  $key->name;?>/250" title="Print QR Code" data-toggle="tooltip">
+                        <a target="_blank" class="btn btn-primary btn-xs" href="<?php echo base_url();?>adm1n/inventory/item/generate_code/<?php $serial = str_replace('/', '~', $key->serial_number); echo $serial;?>/<?php echo  $key->name;?>/50" title="Print QR Code" data-toggle="tooltip">
                             <i class="fa fa-print"></i>
                         </a> 
                         <button type="button" class="btn btn-primary dropdown-toggle btn-xs" data-toggle="dropdown">
@@ -90,23 +96,23 @@
                         </button>
                         <ul style="width: 30px" class="dropdown-menu" role="menu">
                             <li>
-                                <a  target="_blank" href="<?php echo base_url();?>adm1n/inventory/item/generate_code/<?php $serial = str_replace('/', '~', $key->serial_number); echo $serial;?>/<?php echo  $key->name;?>/100">
+                                <a  target="_blank" href="<?php echo base_url();?>adm1n/inventory/item/generate_code/<?php $serial = str_replace('/', '~', $key->serial_number); echo $serial;?>/<?php echo  $key->name;?>/50">
                                     Small
                                 </a>
                             </li>
                             <li>
-                                <a target="_blank" href="<?php echo base_url();?>adm1n/inventory/item/generate_code/<?php $serial = str_replace('/', '~', $key->serial_number); echo $serial;?>/<?php echo  $key->name;?>/200">
+                                <a target="_blank" href="<?php echo base_url();?>adm1n/inventory/item/generate_code/<?php $serial = str_replace('/', '~', $key->serial_number); echo $serial;?>/<?php echo  $key->name;?>/100">
                                     Medium
                                 </a>
                             </li>
                             <li>
-                                <a target="_blank" href="<?php echo base_url();?>adm1n/inventory/item/generate_code/<?php $serial = str_replace('/', '~', $key->serial_number); echo $serial;?>/<?php echo  $key->name;?>/300">
+                                <a target="_blank" href="<?php echo base_url();?>adm1n/inventory/item/generate_code/<?php $serial = str_replace('/', '~', $key->serial_number); echo $serial;?>/<?php echo  $key->name;?>/150">
                                     Large
                                 </a>
                             </li>
                         </ul>
                     </div>
-                    <div class="btn btn-warning btn-xs" onclick="edit('<?php echo $key->id;?>','<?php echo $key->category_item;?>','<?php echo $key->parent;?>','<?php echo $key->name;?>','<?php echo $key->description;?>','<?php echo $key->can_be_rent;?>','<?php echo $key->serial_number;?>','<?php echo $key->entry_date;?>','<?php echo $key->status;?>','<?php echo $key->location;?>');" title="Edit" data-toggle="tooltip"><i class="fa fa-edit"></i>
+                    <div class="btn btn-warning btn-xs" onclick="edit('<?php echo $key->id;?>','<?php echo $key->category_item;?>','<?php echo $key->parent;?>','<?php echo $key->name;?>','<?php echo $key->description;?>','<?php echo $key->can_be_rent;?>','<?php echo $key->sn_product;?>','<?php echo $key->entry_date;?>','<?php echo $key->status;?>','<?php echo $key->location;?>');" title="Edit" data-toggle="tooltip"><i class="fa fa-edit"></i>
                     </div>
                     <br>
                     <div class="btn btn-danger btn-xs" onclick="ConfirmMessage('Are you sure to delete this item ?','<?php echo base_url();?>adm1n/inventory/item/delete/<?php echo $key->id ?>')" title="Remove" data-toggle="tooltip"><i class="clip-remove"></i></div>
@@ -213,7 +219,7 @@
                             </div>
                         </div>
                         <div class="row" style="margin-bottom: 5px;">
-                            <div class="col-md-3">Serial</div>
+                            <div class="col-md-3">Serial Number</div>
                             <div class="col-md-7">
                                 <input type="text" class="form-control" name="serial_number" placeholder=" example. 098080" id="mdl_form_serial_number">
                             </div>
